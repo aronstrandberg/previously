@@ -135,7 +135,8 @@ class EmbeddingWorker {
         this.embeddedSinceLog += batch.length
         if (Date.now() - this.lastProgressLog > PROGRESS_LOG_MS) {
           this.lastProgressLog = Date.now()
-          this.log(`embedded ${this.embeddedSinceLog} passages, ${this.store.stats().pending} pending`)
+          const { pending } = this.store.stats()
+          if (pending >= BACKLOG_LOG_THRESHOLD) this.log(`embedded ${this.embeddedSinceLog} passages, ${pending} pending`)
         }
       } catch (error) {
         this.log(`embedding failed: ${errorMessage(error)}`)
