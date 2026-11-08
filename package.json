@@ -1,11 +1,11 @@
 {
-  "name": "opencode-recall",
+  "name": "previously",
   "version": "0.1.0",
   "description": "Local hybrid keyword and semantic search over your OpenCode sessions, as an MCP server and an OpenCode plugin.",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "opencode-recall": "./src/cli.ts"
+    "previously": "./src/cli.ts"
   },
   "exports": {
     ".": "./src/plugin.ts"

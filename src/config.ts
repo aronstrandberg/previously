@@ -51,18 +51,18 @@ function positiveInt(name: string, fallback: number): number {
 
 export function loadConfig(): Config {
   const dataHome = process.env.XDG_DATA_HOME || join(homedir(), ".local", "share")
-  const dataDir = process.env.OPENCODE_RECALL_DATA || join(dataHome, "opencode-recall")
-  const modelID = process.env.OPENCODE_RECALL_MODEL || "Xenova/bge-small-en-v1.5"
+  const dataDir = process.env.PREVIOUSLY_DATA || join(dataHome, "previously")
+  const modelID = process.env.PREVIOUSLY_MODEL || "Xenova/bge-small-en-v1.5"
   const model = MODELS[modelID]
-  if (!model) throw new Error(`Unknown OPENCODE_RECALL_MODEL ${modelID}. Known models: ${Object.keys(MODELS).join(", ")}`)
+  if (!model) throw new Error(`Unknown PREVIOUSLY_MODEL ${modelID}. Known models: ${Object.keys(MODELS).join(", ")}`)
   return {
     dataDir,
     databasePath: join(dataDir, "index.db"),
     tokenPath: join(dataDir, "token"),
-    host: process.env.OPENCODE_RECALL_HOST || "127.0.0.1",
-    port: positiveInt("OPENCODE_RECALL_PORT", 4747),
+    host: process.env.PREVIOUSLY_HOST || "127.0.0.1",
+    port: positiveInt("PREVIOUSLY_PORT", 4747),
     model,
-    threads: positiveInt("OPENCODE_RECALL_THREADS", Math.max(1, Math.floor(availableParallelism() / 2))),
+    threads: positiveInt("PREVIOUSLY_THREADS", Math.max(1, Math.floor(availableParallelism() / 2))),
     timeZone: process.env.TZ || Intl.DateTimeFormat().resolvedOptions().timeZone,
   }
 }

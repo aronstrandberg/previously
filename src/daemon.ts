@@ -18,7 +18,7 @@ const BACKLOG_LOG_THRESHOLD = 1_000
 const VERSION = "0.1.0"
 
 export async function serve(config: Config) {
-  const log: Log = (message) => console.log(`[opencode-recall] ${message}`)
+  const log: Log = (message) => console.log(`[previously] ${message}`)
   const token = loadToken(config)
   const store = new Store(config.databasePath, config.model)
   const embedder = new Embedder(config)
@@ -71,7 +71,7 @@ export async function serve(config: Config) {
 
 /** Answers one MCP request with a fresh stateless server; the tools hold no per-client state. */
 async function handleMcp(request: Request, handlers: Handlers): Promise<Response> {
-  const mcp = new McpServer({ name: "opencode-recall", version: VERSION })
+  const mcp = new McpServer({ name: "previously", version: VERSION })
   for (const [name, tool] of Object.entries(TOOLS) as [ToolName, (typeof TOOLS)[ToolName]][]) {
     mcp.registerTool(
       name,

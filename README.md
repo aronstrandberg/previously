@@ -1,4 +1,4 @@
-# opencode-recall
+# previously
 
 Search your past [OpenCode](https://opencode.ai) sessions by keyword and by meaning, locally. It indexes
 every session the OpenCode background service knows about, keeps the index current as you work, and
@@ -13,7 +13,7 @@ one SQLite file.
 flowchart LR
   oc[OpenCode service] -- "sessions, messages (HTTP API)" --> sync
   oc -- "session events (SSE)" --> sync
-  subgraph daemon["opencode-recall serve"]
+  subgraph daemon["previously serve"]
     sync[Syncer] --> db[(index.db<br/>FTS5 + sqlite-vec)]
     db --> embed[Embedding worker] --> db
     db --> search[Hybrid search]
@@ -24,7 +24,7 @@ flowchart LR
   mcp --> clients[Other MCP clients]
 ```
 
-`opencode-recall serve` is one long-running process. It finds the OpenCode background service the same
+`previously serve` is one long-running process. It finds the OpenCode background service the same
 way the `opencode` CLI does, then:
 
 - lists every session and syncs the ones that changed since the last run, on start and every ten minutes;
@@ -60,25 +60,25 @@ Times accept ISO dates (`2026-11-01`) or durations back from now (`12h`, `7d`, `
 You need [Bun](https://bun.sh) 1.4 or newer and OpenCode 2.2 or newer.
 
 ```sh
-git clone https://github.com/aronstrandberg/opencode-recall
-cd opencode-recall
+git clone https://github.com/aronstrandberg/previously
+cd previously
 bun install
-bun link            # puts `opencode-recall` in ~/.bun/bin
+bun link            # puts `previously` in ~/.bun/bin
 ```
 
 Run the daemon. On Linux with systemd:
 
 ```sh
 mkdir -p ~/.config/systemd/user
-ln -s "$PWD/systemd/opencode-recall.service" ~/.config/systemd/user/
+ln -s "$PWD/systemd/previously.service" ~/.config/systemd/user/
 systemctl --user daemon-reload
-systemctl --user enable --now opencode-recall
-journalctl --user -u opencode-recall -f
+systemctl --user enable --now previously
+journalctl --user -u previously -f
 ```
 
-Elsewhere, run `opencode-recall serve` under whatever keeps processes alive for you.
+Elsewhere, run `previously serve` under whatever keeps processes alive for you.
 
-On first start the daemon writes a random bearer token to `~/.local/share/opencode-recall/token`
+On first start the daemon writes a random bearer token to `~/.local/share/previously/token`
 (mode 0600). Clients must send it; the plugin and CLI read it from there.
 
 ### OpenCode plugin
@@ -87,40 +87,40 @@ Add the checkout to `plugins` in `~/.config/opencode/opencode.jsonc`:
 
 ```jsonc
 {
-  "plugins": ["/path/to/opencode-recall"],
+  "plugins": ["/path/to/previously"],
 }
 ```
 
-The tools appear in the `recall` namespace. `search_sessions` leaves out the session that calls it.
+The tools appear in the `previously` namespace. `search_sessions` leaves out the session that calls it.
 
 ### Other MCP clients
 
 The MCP endpoint is `http://127.0.0.1:4747/mcp` (Streamable HTTP, stateless). For Claude Code:
 
 ```sh
-claude mcp add --transport http recall http://127.0.0.1:4747/mcp \
-  --header "Authorization: Bearer $(cat ~/.local/share/opencode-recall/token)"
+claude mcp add --transport http previously http://127.0.0.1:4747/mcp \
+  --header "Authorization: Bearer $(cat ~/.local/share/previously/token)"
 ```
 
 ### CLI
 
 ```sh
-opencode-recall search "why did the collector drop spans" --since 14d
-opencode-recall search '"connection reset by peer"' --mode keyword
-opencode-recall read ses_e4308a0f7ffeSZpoxk7YSfmbt9 msg_1b5800855001kxx5WsVTso740b
-opencode-recall list --title grafana
-opencode-recall status
+previously search "why did the collector drop spans" --since 14d
+previously search '"connection reset by peer"' --mode keyword
+previously read ses_e4308a0f7ffeSZpoxk7YSfmbt9 msg_1b5800855001kxx5WsVTso740b
+previously list --title grafana
+previously status
 ```
 
 ## Configuration
 
 | Variable | Default | |
 | --- | --- | --- |
-| `OPENCODE_RECALL_PORT` | `4747` | Port the daemon listens on |
-| `OPENCODE_RECALL_HOST` | `127.0.0.1` | Address the daemon listens on |
-| `OPENCODE_RECALL_DATA` | `$XDG_DATA_HOME/opencode-recall` | Index, token and model cache |
-| `OPENCODE_RECALL_MODEL` | `Xenova/bge-small-en-v1.5` | Also `Xenova/bge-base-en-v1.5`, `Xenova/all-MiniLM-L6-v2` |
-| `OPENCODE_RECALL_THREADS` | half the CPUs | Threads for embedding |
+| `PREVIOUSLY_PORT` | `4747` | Port the daemon listens on |
+| `PREVIOUSLY_HOST` | `127.0.0.1` | Address the daemon listens on |
+| `PREVIOUSLY_DATA` | `$XDG_DATA_HOME/previously` | Index, token and model cache |
+| `PREVIOUSLY_MODEL` | `Xenova/bge-small-en-v1.5` | Also `Xenova/bge-base-en-v1.5`, `Xenova/all-MiniLM-L6-v2` |
+| `PREVIOUSLY_THREADS` | half the CPUs | Threads for embedding |
 | `TZ` | system zone | Time zone of printed times |
 
 Changing the model re-embeds every passage on the next start. To rebuild the index from scratch, stop the
@@ -129,7 +129,7 @@ daemon and delete `index.db`.
 The plugin takes `url` and `tokenPath` options for a daemon on another port:
 
 ```jsonc
-{ "plugins": [{ "package": "/path/to/opencode-recall", "options": { "url": "http://127.0.0.1:4848" } }] }
+{ "plugins": [{ "package": "/path/to/previously", "options": { "url": "http://127.0.0.1:4848" } }] }
 ```
 
 ## Privacy
