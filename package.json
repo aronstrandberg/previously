@@ -1,0 +1,38 @@
+{
+  "name": "opencode-recall",
+  "version": "0.1.0",
+  "description": "Local hybrid keyword and semantic search over your OpenCode sessions, as an MCP server and an OpenCode plugin.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "opencode-recall": "./src/cli.ts"
+  },
+  "exports": {
+    ".": "./src/plugin.ts"
+  },
+  "files": [
+    "src",
+    "systemd"
+  ],
+  "scripts": {
+    "serve": "bun src/cli.ts serve",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.3.2",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@opencode/client": "2.2.0",
+    "@opencode/plugin": "2.2.0",
+    "sqlite-vec": "^0.1.9",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "typescript": "^7.0.2"
+  },
+  "trustedDependencies": [
+    "onnxruntime-node",
+    "protobufjs"
+  ]
+}
